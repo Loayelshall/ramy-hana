@@ -24,6 +24,8 @@
     --ink-dim:   #7c6a44;   /* secondary text */
     --on-gold:   #3a2a10;   /* text on gold fills */
     --line:      rgba(156, 122, 46, 0.34);
+    --frame-line: rgba(156, 122, 46, 0.22);
+    --card:      rgba(255, 251, 243, 0.55);
 
     /* Type */
     --display: "Cormorant Garamond", "Hoefler Text", Garamond, serif;
@@ -50,17 +52,6 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
-  }
-
-  /* allover floral lattice behind everything */
-  #floral {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.17;
   }
 
   #glitter {
@@ -232,7 +223,7 @@
      INVITATION BODY (revealed)
      ============================================================ */
   .details { display: none; }
-  body.is-open .details { display: block; }
+  body.is-open .details { display: block; padding: 1.6rem 0 0.5rem; }
 
   .reveal {
     opacity: 0;
@@ -248,11 +239,34 @@
   @keyframes rise { to { opacity: 1; transform: none; } }
 
   section.block {
+    position: relative;
     text-align: center;
-    padding: clamp(2.6rem, 8vw, 4.4rem) 0;
-    border-top: 1px solid var(--line);
+    max-width: 40rem;
+    margin: 0 auto 1.7rem;
+    padding: clamp(2.2rem, 6vw, 3.2rem) clamp(1.1rem, 4.5vw, 2.4rem);
+    border: 1px solid var(--frame-line);
+    border-radius: 18px;
+    background: var(--card);
   }
-  section.block:first-child { border-top: none; }
+
+  /* small floral corner frame on each item */
+  .frame-corner {
+    position: absolute;
+    width: clamp(26px, 7vw, 40px);
+    height: auto;
+    color: var(--gold);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .frame-corner.tl { top: -11px; left: -11px; }
+  .frame-corner.tr { top: -11px; right: -11px; transform: scaleX(-1); }
+  .frame-corner.bl { bottom: -11px; left: -11px; transform: scaleY(-1); }
+  .frame-corner.br { bottom: -11px; right: -11px; transform: scale(-1, -1); }
+
+  @media (max-width: 460px) {
+    .when { flex-direction: column; gap: 0.8rem; }
+    .when__rule { display: none; }
+  }
 
   .lead {
     max-width: 34rem;
@@ -325,10 +339,7 @@
   .cal {
     max-width: 23rem;
     margin: 1rem auto 0;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--panel);
-    padding: clamp(1rem, 4vw, 1.6rem);
+    padding: clamp(0.4rem, 2vw, 0.8rem);
   }
   .cal__title {
     font-family: var(--display);
@@ -450,40 +461,6 @@
   .btn-open, .scroll-cue { display: none; }
 </style></noscript>
 
-<svg id="floral" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <g id="bloom" fill="var(--gold)">
-      <ellipse rx="3.4" ry="7.6" transform="rotate(0) translate(0 -7.6)"/>
-      <ellipse rx="3.4" ry="7.6" transform="rotate(60) translate(0 -7.6)"/>
-      <ellipse rx="3.4" ry="7.6" transform="rotate(120) translate(0 -7.6)"/>
-      <ellipse rx="3.4" ry="7.6" transform="rotate(180) translate(0 -7.6)"/>
-      <ellipse rx="3.4" ry="7.6" transform="rotate(240) translate(0 -7.6)"/>
-      <ellipse rx="3.4" ry="7.6" transform="rotate(300) translate(0 -7.6)"/>
-      <circle r="3.1"/>
-    </g>
-    <pattern id="fltile" width="172" height="172" patternUnits="userSpaceOnUse">
-      <g stroke="var(--gold)" stroke-width="1.2" fill="none" stroke-linecap="round">
-        <path d="M86 86 C66 70 52 54 40 34"/>
-        <path d="M86 86 C106 70 120 54 132 34"/>
-        <path d="M86 86 C66 102 52 118 40 138"/>
-        <path d="M86 86 C106 102 120 118 132 138"/>
-      </g>
-      <g fill="var(--gold)">
-        <path d="M62 56 c-7 -5 -15 -4 -20 1 c7 5 15 4 20 -1Z"/>
-        <path d="M110 56 c7 -5 15 -4 20 1 c-7 5 -15 4 -20 -1Z"/>
-        <path d="M62 116 c-7 5 -15 4 -20 -1 c7 -5 15 -4 20 1Z"/>
-        <path d="M110 116 c7 5 15 4 20 -1 c-7 -5 -15 -4 -20 1Z"/>
-      </g>
-      <use href="#bloom" x="86" y="86"/>
-      <use href="#bloom" x="0" y="0"/>
-      <use href="#bloom" x="172" y="0"/>
-      <use href="#bloom" x="0" y="172"/>
-      <use href="#bloom" x="172" y="172"/>
-    </pattern>
-  </defs>
-  <rect width="100%" height="100%" fill="url(#fltile)"/>
-</svg>
-
 <canvas id="glitter" aria-hidden="true"></canvas>
 
 <main class="shell">
@@ -573,7 +550,7 @@
   <div class="details" id="details">
 
     <!-- intro -->
-    <section class="block reveal">
+    <section class="block reveal framed">
       <p class="eyebrow">Katb Ketab</p>
       <div class="ornament" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1.2 3.2 3 5 6.2 6.2C15 9.4 13.2 11.2 12 14.4 10.8 11.2 9 9.4 5.8 8.2 9 7 10.8 5.2 12 2Z"/></svg>
@@ -586,7 +563,7 @@
     </section>
 
     <!-- when -->
-    <section class="block reveal">
+    <section class="block reveal framed">
       <p class="eyebrow">The celebration will take place</p>
       <div class="when">
         <div class="when__col">
@@ -607,7 +584,7 @@
     </section>
 
     <!-- countdown -->
-    <section class="block reveal">
+    <section class="block reveal framed">
       <p class="eyebrow">Countdown</p>
       <div class="count" id="count" aria-live="polite">
         <div class="count__cell"><div class="count__n" id="cd-d">—</div><div class="count__l">Days</div></div>
@@ -618,7 +595,7 @@
     </section>
 
     <!-- calendar + add -->
-    <section class="block reveal">
+    <section class="block reveal framed">
       <div class="cal">
         <p class="cal__title">December 2026</p>
         <table id="calTable" aria-label="December 2026, the celebration is on the 4th">
@@ -637,7 +614,7 @@
     </section>
 
     <!-- venue -->
-    <section class="block reveal">
+    <section class="block reveal framed">
       <p class="eyebrow">The venue</p>
       <h2 class="venue__name">Masjed El Aziz El Hakim</h2>
       <p class="venue__addr">
@@ -771,6 +748,38 @@
 
     if (getComputedStyle(details).display !== "none" && !body.classList.contains("is-open")) {
       startCountdown();
+    }
+  })();
+
+  // ---------- Floral corner frames ----------
+  (function () {
+    "use strict";
+    var inner =
+      '<g stroke="var(--gold)" stroke-width="1.2" fill="none" stroke-linecap="round">' +
+        '<path d="M11 11 C13 27 19 37 31 41"/>' +
+        '<path d="M11 11 C27 13 37 19 41 31"/>' +
+      '</g>' +
+      '<g fill="var(--gold)">' +
+        '<path d="M19 31 c-6 -2 -10 -7 -11 -14 c6 2 10 7 11 14Z"/>' +
+        '<path d="M31 19 c-2 -6 -7 -10 -14 -11 c2 6 7 10 14 11Z"/>' +
+        '<circle cx="31" cy="41" r="2"/>' +
+        '<circle cx="41" cy="31" r="2"/>' +
+        '<g transform="translate(11 11)">' +
+          '<ellipse rx="2.8" ry="6" transform="rotate(0) translate(0 -6)"/>' +
+          '<ellipse rx="2.8" ry="6" transform="rotate(72) translate(0 -6)"/>' +
+          '<ellipse rx="2.8" ry="6" transform="rotate(144) translate(0 -6)"/>' +
+          '<ellipse rx="2.8" ry="6" transform="rotate(216) translate(0 -6)"/>' +
+          '<ellipse rx="2.8" ry="6" transform="rotate(288) translate(0 -6)"/>' +
+          '<circle r="2.6" fill="var(--gold-deep)"/>' +
+        '</g>' +
+      '</g>';
+    var pos = ["tl", "tr", "bl", "br"];
+    var items = document.querySelectorAll(".framed");
+    for (var i = 0; i < items.length; i++) {
+      for (var j = 0; j < pos.length; j++) {
+        items[i].insertAdjacentHTML("beforeend",
+          '<svg class="frame-corner ' + pos[j] + '" viewBox="0 0 52 52" fill="none" aria-hidden="true">' + inner + '</svg>');
+      }
     }
   })();
 
