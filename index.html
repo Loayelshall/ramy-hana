@@ -25,7 +25,7 @@
     --on-gold:   #3a2a10;   /* text on gold fills */
     --line:      rgba(156, 122, 46, 0.34);
     --frame-line: rgba(156, 122, 46, 0.22);
-    --card:      rgba(255, 251, 243, 0.55);
+    --card:      rgba(255, 251, 243, 0.72);
 
     /* Type */
     --display: "Cormorant Garamond", "Hoefler Text", Garamond, serif;
@@ -61,6 +61,24 @@
     height: 100%;
     z-index: 0;
     pointer-events: none;
+  }
+
+  /* scattered pink blossoms in the background */
+  #petals {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  #petals .pf {
+    position: absolute;
+    animation: petalSway var(--d, 9s) ease-in-out infinite;
+  }
+  #petals .pf svg { display: block; width: 100%; height: 100%; transform: rotate(var(--r, 0deg)); }
+  @keyframes petalSway {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
 
   .shell {
@@ -448,6 +466,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .flowers svg { animation: none; }
+    #petals .pf { animation: none; }
     body.is-open .reveal { animation: none; opacity: 1; transform: none; }
     .reveal { opacity: 1; transform: none; }
     .btn-open, .btn-line { transition: none; }
@@ -461,6 +480,7 @@
   .btn-open, .scroll-cue { display: none; }
 </style></noscript>
 
+<div id="petals" aria-hidden="true"></div>
 <canvas id="glitter" aria-hidden="true"></canvas>
 
 <main class="shell">
@@ -781,6 +801,44 @@
           '<svg class="frame-corner ' + pos[j] + '" viewBox="0 0 52 52" fill="none" aria-hidden="true">' + inner + '</svg>');
       }
     }
+  })();
+
+  // ---------- Scattered pink blossoms ----------
+  (function () {
+    "use strict";
+    var layer = document.getElementById("petals");
+    if (!layer) return;
+    // [petal fill, center fill]
+    var shades = [
+      ["#e79bb6", "#cf6f94"],
+      ["#eeb1c7", "#dd8aab"],
+      ["#e489a9", "#c76e92"],
+      ["#f2bfd1", "#e097b4"]
+    ];
+    function flower(petal, center) {
+      var p = "";
+      for (var a = 0; a < 5; a++) {
+        p += '<ellipse rx="4.4" ry="9" transform="rotate(' + (a * 72) + ') translate(0 -9)"/>';
+      }
+      return '<svg viewBox="-19 -19 38 38" fill="' + petal + '">' + p +
+             '<circle r="3.4" fill="' + center + '"/></svg>';
+    }
+    var N = 16;
+    var html = "";
+    for (var i = 0; i < N; i++) {
+      var s = shades[(Math.random() * shades.length) | 0];
+      var size = (Math.random() * 32 + 18).toFixed(0);     // 18-50px
+      var left = (Math.random() * 98).toFixed(2);
+      var top = (Math.random() * 98).toFixed(2);
+      var rot = (Math.random() * 360).toFixed(0);
+      var op = (Math.random() * 0.26 + 0.3).toFixed(2);    // 0.30-0.56
+      var dur = (Math.random() * 6 + 7).toFixed(1);        // 7-13s
+      var delay = (-Math.random() * 10).toFixed(1);
+      html += '<span class="pf" style="left:' + left + '%;top:' + top + '%;width:' + size +
+              'px;height:' + size + 'px;opacity:' + op + ';--r:' + rot + 'deg;--d:' + dur +
+              's;animation-delay:' + delay + 's">' + flower(s[0], s[1]) + '</span>';
+    }
+    layer.innerHTML = html;
   })();
 
   // ---------- Light gold glitter ----------
